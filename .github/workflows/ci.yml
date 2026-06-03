@@ -13,7 +13,7 @@ jobs:
     name: Lint & validate manifest
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: ShellCheck bash scripts
         run: shellcheck scripts/bash/*.sh scripts/test/*.sh
@@ -30,7 +30,7 @@ jobs:
           }
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.x'
 
@@ -47,7 +47,7 @@ jobs:
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Configure git identity
         run: |
