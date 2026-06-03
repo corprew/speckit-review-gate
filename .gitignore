@@ -1,0 +1,13 @@
+# Local spec-kit sample projects used for testing the extension
+/sample/
+/.sample/
+
+# Diff scratch files
+review-gate-diff.*
+
+# Local agent settings (not part of the extension)
+.claude/
+
+# OS / editor cruft
+.DS_Store
+*.swp

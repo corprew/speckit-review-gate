@@ -1,0 +1,28 @@
+# Spec Kit Review Gate configuration
+# Installed to .specify/ as review-gate-config.yml. All values are optional;
+# anything omitted falls back to the `defaults` block in the extension manifest.
+
+# /code-review effort level: low | medium | high | max
+# Higher effort = broader coverage (may surface lower-confidence findings).
+effort: high
+
+# Base ref the implementation diff is compared against.
+#   auto   -> merge-base against main/master, falling back to the branch fork point
+#   main | master | <ref> -> compare against an explicit ref
+base_branch: auto
+
+# What counts as a *blocking* finding. Everything below this bar is reported as
+# advisory and does NOT block. The gate blocks ONLY on high-severity findings.
+gate:
+  min_severity: high          # block findings at this severity or above
+  categories: [security, bug]  # ...within these categories
+  min_confidence: high         # ...at this confidence or above
+  advisory_only_below_bar: true
+
+# Where the gate report is written, relative to the feature directory
+# (e.g. specs/001-my-feature/review-gate-report.md).
+report_path: review-gate-report.md
+
+# Allow `/speckit.review-gate.review --override` to record an explicit
+# acknowledgement and proceed despite blocking findings.
+allow_override: true
