@@ -9,12 +9,11 @@
 #                 auto-detection (merge-base vs main/master) is used.
 set -euo pipefail
 
-JSON=1
 BASE_OVERRIDE="${REVIEW_GATE_BASE:-}"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --json) JSON=1; shift ;;
+    --json) shift ;;  # JSON is the only output mode; accepted for compatibility
     --base) BASE_OVERRIDE="${2:-}"; shift 2 ;;
     *) shift ;;
   esac
@@ -68,6 +67,8 @@ FEATURE_DIR=""
 if [[ -d "specs/$BRANCH" ]]; then
   FEATURE_DIR="specs/$BRANCH"
 elif [[ -d "specs" ]]; then
+  # specs/* are controlled dir names; most-recently-modified via ls is intentional.
+  # shellcheck disable=SC2012
   FEATURE_DIR="$(ls -dt specs/*/ 2>/dev/null | head -n1 | sed 's:/*$::')"
 fi
 
