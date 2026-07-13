@@ -4,6 +4,14 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/) and this project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [0.1.1] - Unreleased
+
+### Changed
+- Removed the `speckit.review-gate.gate` alias. It installed a second skill
+  (`speckit-review-gate-gate`) identical to `speckit-review-gate-review` apart
+  from its name, cluttering the skill list. The command is now only invoked as
+  `/speckit-review-gate-review`.
+
 ## [0.1.0] - Unreleased
 
 ### Added

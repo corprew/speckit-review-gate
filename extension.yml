@@ -3,7 +3,7 @@ schema_version: "1.0"
 extension:
   id: "review-gate"
   name: "Spec Kit Review Gate"
-  version: "0.1.0"
+  version: "0.1.1"
   description: "Runs Claude Code's /code-review on the implementation diff after /speckit.implement and gates on high-severity findings."
   author: "Corprew"
   repository: "https://github.com/corprew/speckit-review-gate"
@@ -23,7 +23,6 @@ provides:
     - name: "speckit.review-gate.review"
       file: "commands/speckit.review-gate.review.md"
       description: "Review the feature-branch implementation diff with /code-review and gate on high-severity findings."
-      aliases: ["speckit.review-gate.gate"]
 
   config:
     - name: "review-gate-config.yml"
