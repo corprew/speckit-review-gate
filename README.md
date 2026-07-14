@@ -18,8 +18,8 @@ security/correctness issues block.
 
 ## Requirements
 
-- Spec Kit with `after_implement` hook support (PR #1702 or later). The manual
-  command works regardless.
+- Spec Kit / `specify` CLI with the extension system and `after_implement` hook
+  support (tested against `specify` 0.10.x). The manual command works regardless.
 - `git`.
 - Claude Code (provides the `/code-review` skill).
 
@@ -28,13 +28,13 @@ security/correctness issues block.
 From a local clone (development):
 
 ```bash
-specify extension add --dev /path/to/speckit-review-gate
+specify extension add /path/to/speckit-review-gate --dev
 ```
 
 From a release URL:
 
 ```bash
-specify extension add --from https://github.com/corprew/speckit-review-gate/releases/download/v0.1.0/speckit-review-gate.zip
+specify extension add --from https://github.com/corprew/speckit-review-gate/releases/download/v0.1.1/speckit-review-gate.zip
 ```
 
 This installs:

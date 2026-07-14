@@ -12,6 +12,12 @@ All notable changes to this project are documented here. The format follows
   from its name, cluttering the skill list. The command is now only invoked as
   `/speckit-review-gate-review`.
 
+### Docs
+- Updated install/usage examples for `specify` 0.10.x: `specify init` uses
+  `--integration claude` (the old `--ai` / `--no-git` flags were removed; git
+  now initializes automatically), and `extension add` shows the path before the
+  `--dev` flag.
+
 ## [0.1.0] - Unreleased
 
 ### Added

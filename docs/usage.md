@@ -58,11 +58,11 @@ Anything outside the bar is advisory and never blocks. `--override` (when
 ## Testing the extension locally
 
 ```bash
-# 1. Scaffold a sample spec-kit project
-specify init sample && cd sample
+# 1. Scaffold a sample spec-kit project (git initializes automatically)
+specify init sample --integration claude && cd sample
 
 # 2. Install this extension from your clone
-specify extension add --dev /path/to/speckit-review-gate
+specify extension add /path/to/speckit-review-gate --dev
 
 # 3. Confirm install (Claude / skills mode)
 test -f .claude/skills/speckit-review-gate-review/SKILL.md && echo "skill installed"
