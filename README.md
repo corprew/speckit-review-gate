@@ -1,11 +1,13 @@
 # Spec Kit Review Gate
 
-A [GitHub Spec Kit](https://github.com/github/spec-kit) extension that runs
-Claude Code's built-in **`/code-review`** on the implementation diff after
-`/speckit.implement`, and **gates completion on high-severity findings**.
+A [GitHub Spec Kit](https://github.com/github/spec-kit) extension that reviews
+the implementation diff after `/speckit.implement` and **gates completion on
+high-severity findings**.
 
-Lower-severity findings are reported as advisory; only high-severity
-security/correctness issues block.
+It works with any spec-kit coding agent: by default it delegates to a native
+review command (**`/code-review`** on Claude Code), and falls back to a portable
+**embedded reviewer** on agents that don't provide one. Lower-severity findings
+are reported as advisory; only high-severity security/correctness issues block.
 
 ## What it does
 
@@ -13,15 +15,17 @@ security/correctness issues block.
 - Wires an **optional** `after_implement` hook, so when `/speckit.implement`
   finishes, the agent offers to run the gate.
 - Resolves the **feature-branch diff** (vs. the auto-detected base), reviews it
-  with `/code-review`, classifies findings, writes a report into the feature
-  directory, and blocks only on high-severity findings.
+  via the configured backend, classifies findings, writes a report into the
+  feature directory, and blocks only on high-severity findings.
 
 ## Requirements
 
 - Spec Kit / `specify` CLI with the extension system and `after_implement` hook
   support (tested against `specify` 0.10.x). The manual command works regardless.
 - `git`.
-- Claude Code (provides the `/code-review` skill).
+- Any spec-kit coding agent. The default `review_backend` (`/code-review`) uses
+  Claude Code's built-in reviewer; on other agents the gate falls back to its
+  embedded reviewer (no extra tooling required).
 
 ## Install
 
@@ -69,12 +73,14 @@ Override a blocking gate (records an acknowledgement in the report):
 Edit `.specify/review-gate-config.yml` (all keys optional):
 
 ```yaml
-effort: high                 # /code-review effort: low | medium | high | max
+review_backend: /code-review # delegate command, or `embedded`; delegates fall
+                             # back to embedded on agents without the command
+effort: high                 # delegate effort (e.g. /code-review): low|medium|high|max
 base_branch: auto            # auto | main | master | <ref>
 gate:
-  min_severity: high
-  categories: [security, bug]
-  min_confidence: high
+  min_severity: high         # severity: critical | high | medium | low
+  categories: [security, bug] # category: security | bug | performance | maintainability | style
+  min_confidence: high       # confidence: high | medium | low
   advisory_only_below_bar: true
 report_path: review-gate-report.md
 allow_override: true

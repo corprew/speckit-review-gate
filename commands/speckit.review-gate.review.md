@@ -1,5 +1,5 @@
 ---
-description: Review the feature-branch implementation diff with /code-review and gate on high-severity findings.
+description: Review the feature-branch implementation diff and gate on high-severity findings.
 ---
 
 # Spec Kit Review Gate
@@ -21,9 +21,9 @@ recording an explicit acknowledgement in the report (only honored when
 ## Step 1 — Load config
 
 Read `.specify/review-gate-config.yml` if it exists. Any missing value falls
-back to the extension defaults: `effort: high`, `base_branch: auto`,
-`gate.min_severity: high`, `gate.categories: [security, bug]`,
-`gate.min_confidence: high`, `report_path: review-gate-report.md`,
+back to the extension defaults: `review_backend: /code-review`, `effort: high`,
+`base_branch: auto`, `gate.min_severity: high`, `gate.categories: [security,
+bug]`, `gate.min_confidence: high`, `report_path: review-gate-report.md`,
 `allow_override: true`.
 
 ## Step 2 — Collect scope
@@ -42,15 +42,31 @@ The JSON contains: `feature_dir`, `branch`, `base`, `merge_base`,
 
 ## Step 3 — Run the review
 
-Invoke the built-in **`/code-review`** skill at the configured `effort`
-(default `high`), scoped to the implementation diff (the `merge_base..HEAD`
-range; the full diff is at `diff_path` and the file list is in
-`changed_files`). Do **not** post PR comments or auto-apply fixes here —
-collect findings only.
+Review the implementation diff (the `merge_base..HEAD` range; the full diff is
+at `diff_path` and the file list is in `changed_files`). Do **not** post PR
+comments or auto-apply fixes here — collect findings only. The `review_backend`
+config value selects how the review runs:
 
-For each finding capture: file, line, **severity**, **confidence**, **category**
-(e.g. security, bug/correctness, performance, style, maintainability), and a
-short description with the suggested fix.
+- **Delegate** (default, `review_backend: /code-review`): if the named command
+  is a review skill/command your agent actually provides, invoke it at the
+  configured `effort` scoped to the diff, then normalize its results into the
+  finding shape below. If your agent does **not** provide that command, silently
+  fall back to the embedded reviewer.
+- **Embedded** (`review_backend: embedded`, and the delegate fallback): review
+  the diff yourself. Check for correctness/logic errors, security
+  vulnerabilities, unhandled errors, resource leaks, and concurrency issues.
+  Ignore pure style unless it is a correctness risk.
+
+Whichever backend runs, record each finding with this exact taxonomy so the gate
+is deterministic:
+- **file**, **line**
+- **severity**: `critical` | `high` | `medium` | `low`
+- **confidence**: `high` | `medium` | `low`
+- **category**: `security` | `bug` | `performance` | `maintainability` | `style`
+- a short description with the suggested fix
+
+When normalizing a delegate's output, map its labels onto this taxonomy (treat
+anything it flags as blocking/critical as `severity: critical`).
 
 ## Step 4 — Classify findings
 

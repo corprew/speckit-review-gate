@@ -2,8 +2,18 @@
 # Installed to .specify/ as review-gate-config.yml. All values are optional;
 # anything omitted falls back to the `defaults` block in the extension manifest.
 
-# /code-review effort level: low | medium | high | max
-# Higher effort = broader coverage (may surface lower-confidence findings).
+# How the review is performed:
+#   /code-review  -> delegate to a native review command/skill (default; the
+#                    built-in reviewer on Claude Code). Any slash command your
+#                    agent provides can go here.
+#   embedded      -> the agent reviews the diff itself using a built-in rubric.
+#                    Fully portable across agents/providers.
+# A delegate that the current agent doesn't provide falls back to `embedded`.
+review_backend: /code-review
+
+# Effort level passed to a delegate that supports it (e.g. /code-review):
+# low | medium | high | max. Higher = broader coverage (more low-confidence
+# findings). Ignored by the embedded reviewer.
 effort: high
 
 # Base ref the implementation diff is compared against.

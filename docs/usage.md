@@ -4,14 +4,14 @@
 
 1. You run `/speckit.implement`. At the end it reads `.specify/extensions.yml`
    and, because this extension registers an **optional** `after_implement` hook,
-   prompts: *"Implementation complete. Run the Claude Code review gate on the
-   diff now?"*
+   prompts: *"Implementation complete. Run the review gate on the diff now?"*
 2. If you accept (or run `/speckit-review-gate-review` manually), the command
    runs `collect-diff.sh` from its installed path
    (`.specify/extensions/review-gate/scripts/bash/collect-diff.sh --json`) and
    parses the JSON describing the diff.
-3. The command invokes `/code-review` on that diff, classifies findings, writes
-   `specs/<branch>/review-gate-report.md`, and applies the gate.
+3. The command reviews that diff via the configured `review_backend`
+   (`/code-review` by default, or the embedded reviewer), classifies findings,
+   writes `specs/<branch>/review-gate-report.md`, and applies the gate.
 
 > Note on naming: spec-kit maps the command `speckit.review-gate.review` to the
 > slash command `/speckit-review-gate-review` (dots → hyphens). For the Claude
@@ -40,6 +40,22 @@ Base resolution: `--base <ref>` / `REVIEW_GATE_BASE` env var → else the first 
 or unrelated history, it falls back to the repo's first commit, then the empty
 tree. Feature directory: `specs/<branch>` if present, else the most recently
 modified `specs/*`.
+
+## The review backend
+
+`review_backend` selects how the diff is reviewed:
+
+- **A delegate command** (default `/code-review`) — invoked at the configured
+  `effort` if the current agent actually provides it (Claude Code does). Its
+  output is normalized into the gate's finding taxonomy.
+- **`embedded`** — the agent reviews the diff itself using a built-in rubric
+  (correctness, security, error handling, resource/concurrency issues). Fully
+  portable across agents; also the fallback whenever a delegate command isn't
+  available in the current agent.
+
+Either way, findings use a fixed taxonomy so the gate is deterministic:
+`severity` ∈ {critical, high, medium, low}, `confidence` ∈ {high, medium, low},
+`category` ∈ {security, bug, performance, maintainability, style}.
 
 ## The gate
 

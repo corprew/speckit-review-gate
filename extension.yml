@@ -3,8 +3,8 @@ schema_version: "1.0"
 extension:
   id: "review-gate"
   name: "Spec Kit Review Gate"
-  version: "0.1.1"
-  description: "Runs Claude Code's /code-review on the implementation diff after /speckit.implement and gates on high-severity findings."
+  version: "1.1.0"
+  description: "Reviews the implementation diff after /speckit.implement and gates on high-severity findings. Uses /code-review by default, with a portable embedded reviewer for other agents."
   author: "Corprew"
   repository: "https://github.com/corprew/speckit-review-gate"
   license: "MIT"
@@ -22,7 +22,7 @@ provides:
   commands:
     - name: "speckit.review-gate.review"
       file: "commands/speckit.review-gate.review.md"
-      description: "Review the feature-branch implementation diff with /code-review and gate on high-severity findings."
+      description: "Review the feature-branch implementation diff and gate on high-severity findings."
 
   config:
     - name: "review-gate-config.yml"
@@ -36,8 +36,8 @@ hooks:
   after_implement:
     command: "speckit.review-gate.review"
     optional: true
-    prompt: "Implementation complete. Run the Claude Code review gate on the diff now?"
-    description: "Reviews the feature-branch diff with /code-review; blocks on high-severity findings."
+    prompt: "Implementation complete. Run the review gate on the diff now?"
+    description: "Reviews the feature-branch diff and blocks on high-severity findings."
     condition: null
 
 tags:
@@ -49,6 +49,10 @@ tags:
 defaults:
   effort: "high"
   base_branch: "auto"
+  # Review backend: a delegate command (e.g. "/code-review" on Claude Code) or
+  # "embedded" to have the agent review the diff itself. Delegates fall back to
+  # the embedded reviewer on agents that don't provide the command.
+  review_backend: "/code-review"
   gate:
     min_severity: "high"
     categories: ["security", "bug"]
