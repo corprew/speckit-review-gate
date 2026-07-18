@@ -57,3 +57,28 @@ jobs:
 
       - name: Run collect-diff test harness
         run: bash scripts/test/test-collect-diff.sh
+
+  install-matrix:
+    name: Multi-agent install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Configure git identity
+        run: |
+          git config --global user.email ci@example.com
+          git config --global user.name ci
+          git config --global init.defaultBranch main
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8
+
+      - name: Install specify CLI
+        # Pinned for reproducibility; bump as the extension is verified against
+        # newer spec-kit releases.
+        run: |
+          uv tool install "specify-cli==0.13.0"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Install across agents and assert command + hook
+        run: bash scripts/test/multi-agent-install.sh
